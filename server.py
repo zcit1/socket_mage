@@ -6,7 +6,7 @@ count=0
 port = 8000
 host = '127.0.0.1'
 ext = ".jpg"
-filename1 = ""
+max_size = 50000
 
 def main():
         global count
@@ -19,9 +19,7 @@ def main():
             print("Waiting to connect...\n")
             conn, addr = s.accept()
             count += 1
-            print("printing count ", count)
-            filename1 = str(count)+'r.jpg'
-            print(filename1)
+
             thread = threading.Thread(target=handle_client, args=(conn, addr))
             print("thread id = ",conn)
             thread.start()
@@ -30,27 +28,28 @@ def main():
 def handle_client(conn, addr):
         lcount=1
         print(f"[NEW CONNECTION] {addr} connected.")
-        #while True:
-            #conn, addr = s.accept()
         print('Connected to addr{}'.format(addr))
         
    
         while True:
             filename = str(addr[0]) +"_"+str(lcount)+"r.jpg"
-            #filename = str(lcount) +"r.jpg"
+        
             with open(filename, 'wb') as f:
-                print("opening ", filename)
-                data = conn.recv(50000)
+                print("Displaying {} recieved from {}".format( filename, addr[0]))
+                data = conn.recv(max_size)
                 f.write(data)
-                #print(data)
                 f.close()
-            with open(filename, 'rb') as f:
                 
+            with open(filename, 'rb') as f:
                 im = Image.open(filename)
                 im.show()
                 lcount += 1
+                
+            if os.path.exists(filename):
+                os.remove(filename)
+                print('Deleting {}...\n' .format(filename))
 
-print('Done')
+        print('Done')
 
 
 if __name__ == "__main__":

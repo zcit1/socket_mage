@@ -14,7 +14,7 @@ while True:
          with open(filename, 'rb') as f:
             print('file opened', filename)
             print ("Start : %s" % time.ctime())
-            time.sleep( 5 )
+            time.sleep( 0.25 )
             print ("End : %s" % time.ctime())
         
             data = s.send(f.read())
